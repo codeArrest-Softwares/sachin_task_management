@@ -1,0 +1,16 @@
+version: '3.4'
+
+services:
+  taskmanagement:
+    image: ${DOCKER_REGISTRY-}taskmanagement
+    build:
+      context: .
+      dockerfile: TaskManagement/Dockerfile
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_URLS=http://+:80
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    ports:
+      - "8080:80"
+      - "444:443"
