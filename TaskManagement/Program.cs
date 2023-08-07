@@ -2,7 +2,7 @@ using Microsoft.EntityFrameworkCore;
 using TaskManagement.Data;
 using TaskManagement.IRepository;
 using TaskManagement.IServices;
-
+using Task = TaskManagement.Models.Task;
 using TaskManagement.Repository;
 using TaskManagement.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -33,6 +33,10 @@ namespace TaskManagement
             builder.Services.AddScoped<IUserRoleRepository, UserRoleRepository>();
             builder.Services.AddScoped<IRolePermissionRepository, RolePermissionRepository>();
             builder.Services.AddScoped<IRolePermissionService, RolePermissionService>();
+            builder.Services.AddScoped<ITaskService, TaskService>();
+            builder.Services.AddScoped<ITaskRepository,TaskRepository>();
+            builder.Services.AddScoped<IUserTaskService, UserTaskService>();
+            builder.Services.AddScoped<IUserTaskRepository,UserTaskRepository>();
 
 
            
@@ -79,7 +83,7 @@ namespace TaskManagement
                 app.UseSwaggerUI();
             }
 
-            app.UseHttpsRedirection();
+            //app.UseHttpsRedirection();
             app.UseAuthentication();
             app.UseAuthorization();
 

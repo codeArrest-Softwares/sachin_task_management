@@ -38,7 +38,8 @@ namespace TaskManagement.Migrations
 
                     b.Property<string>("PermissionName")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(255)
+                        .HasColumnType("nvarchar(255)");
 
                     b.HasKey("PermissionId");
 
@@ -59,7 +60,8 @@ namespace TaskManagement.Migrations
 
                     b.Property<string>("RoleName")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(255)
+                        .HasColumnType("nvarchar(255)");
 
                     b.HasKey("RoleId");
 
@@ -81,6 +83,40 @@ namespace TaskManagement.Migrations
                     b.ToTable("RolePermission");
                 });
 
+            modelBuilder.Entity("TaskManagement.Models.Task", b =>
+                {
+                    b.Property<Guid>("TaskId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("AssociatedProject")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<string>("Description")
+                        .IsRequired()
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)");
+
+                    b.Property<DateTime>("DueDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Priority")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
+                    b.Property<string>("Title")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.HasKey("TaskId");
+
+                    b.ToTable("Task");
+                });
+
             modelBuilder.Entity("TaskManagement.Models.User", b =>
                 {
                     b.Property<Guid>("Id")
@@ -92,7 +128,8 @@ namespace TaskManagement.Migrations
 
                     b.Property<string>("Email")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(30)
+                        .HasColumnType("nvarchar(30)");
 
                     b.Property<bool>("IsActive")
                         .HasColumnType("bit");
@@ -102,11 +139,13 @@ namespace TaskManagement.Migrations
 
                     b.Property<string>("Password")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(15)
+                        .HasColumnType("nvarchar(15)");
 
                     b.Property<string>("Username")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(20)
+                        .HasColumnType("nvarchar(20)");
 
                     b.HasKey("Id");
 
@@ -126,6 +165,21 @@ namespace TaskManagement.Migrations
                     b.HasIndex("Id");
 
                     b.ToTable("UserRole");
+                });
+
+            modelBuilder.Entity("TaskManagement.Models.UserTask", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("TaskId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasKey("Id", "TaskId");
+
+                    b.HasIndex("TaskId");
+
+                    b.ToTable("UserTask");
                 });
 
             modelBuilder.Entity("TaskManagement.Models.RolePermission", b =>
@@ -166,6 +220,25 @@ namespace TaskManagement.Migrations
                     b.Navigation("User");
                 });
 
+            modelBuilder.Entity("TaskManagement.Models.UserTask", b =>
+                {
+                    b.HasOne("TaskManagement.Models.User", "User")
+                        .WithMany("UserTasks")
+                        .HasForeignKey("Id")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("TaskManagement.Models.Task", "Task")
+                        .WithMany("UserTasks")
+                        .HasForeignKey("TaskId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Task");
+
+                    b.Navigation("User");
+                });
+
             modelBuilder.Entity("TaskManagement.Models.Permission", b =>
                 {
                     b.Navigation("RolePermissions");
@@ -178,9 +251,16 @@ namespace TaskManagement.Migrations
                     b.Navigation("UserRoles");
                 });
 
+            modelBuilder.Entity("TaskManagement.Models.Task", b =>
+                {
+                    b.Navigation("UserTasks");
+                });
+
             modelBuilder.Entity("TaskManagement.Models.User", b =>
                 {
                     b.Navigation("UserRoles");
+
+                    b.Navigation("UserTasks");
                 });
 #pragma warning restore 612, 618
         }

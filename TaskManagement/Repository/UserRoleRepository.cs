@@ -35,7 +35,7 @@ namespace TaskManagement.Repository
         }
 
         public bool DeleteUserRole(Guid id)
-        {
+        {   
             var user = _Context.User.Where(x => x.Id == id).FirstOrDefault();
             var rid = _Context.UserRole.Where(p => p.Id == id).Select(x => x.RoleId).FirstOrDefault();
             var role = _Context.Role.Where(x => x.RoleId == rid).FirstOrDefault(); 

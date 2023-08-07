@@ -69,28 +69,42 @@ namespace TaskManagement.Controllers
         [HttpPut("{id}")]
         public IActionResult UpdateRole([FromRoute] Guid id, [FromBody] RoleDto updatedRole)
         {
+            bool IsValid = true;
+            bool IsUpdated = false;
 
             if (updatedRole == null)
-                return BadRequest(ModelState);
-
-            if (id != updatedRole.RoleId)
-                return BadRequest(ModelState);
-
-            if (!_roleService.RoleExists(id))
-                return NotFound();
-
-            if (!ModelState.IsValid)
-                return BadRequest();
-
-            var userMap = _mapper.Map<Role>(updatedRole);
-
-            if (!_roleService.UpdateRole(id, userMap))
             {
-                ModelState.AddModelError("", "Something went wrong updating owner");
-                return StatusCode(500, ModelState);
+                IsValid = false;
+                ModelState.AddModelError("", "Updated permission is null");
             }
 
-            return NoContent();
+            if (IsValid &&!_roleService.RoleExists(id))
+            {
+                IsValid = false;
+                ModelState.AddModelError("", "Role not found");
+            }
+
+
+            if (IsValid && !ModelState.IsValid)
+            {
+                IsValid = false;
+            }
+
+
+            var userMap = _mapper.Map<Role>(updatedRole);
+            IsUpdated = _roleService.UpdateRole(id, userMap);
+            if (!IsUpdated)
+            {
+                ModelState.AddModelError("", "Something went wrong updating ROLE");
+            
+            }
+            if (!IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+            return IsUpdated ? Ok("updated") : StatusCode(500, ModelState);
+
+         
         }
 
         [HttpDelete("{roleId}")]

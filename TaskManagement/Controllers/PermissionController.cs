@@ -52,44 +52,52 @@ namespace TaskManagement.Controllers
             if (permissionCreate == null)
                 return BadRequest(ModelState);
 
-
-
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
 
             var userMap = _mapper.Map<Permission>(permissionCreate);
+              _permissionService.CreatePermission(userMap);
 
-
-            _permissionService.CreatePermission(userMap);
-
-
-            return Ok("Successfully created");
+               return Ok("Successfully created");
         }
         [HttpPut("{id}")]
         public IActionResult UpdatePermission([FromRoute] int id, [FromBody] PermissionDto updatedPermission)
         {
+            bool isUpdated = false;
+            bool isValid = true;
 
-            if (updatedPermission == null)
-                return BadRequest(ModelState);
-
-            if (id != updatedPermission.PermissionId)
-                return BadRequest(ModelState);
-
-            if (!_permissionService.PermissionExists(id))
-                return NotFound();
-
-            if (!ModelState.IsValid)
-                return BadRequest();
-
-            var userMap = _mapper.Map<Permission>(updatedPermission);
-
-            if (!_permissionService.UpdatePermission(id, userMap))
+          if (updatedPermission == null)
             {
-                ModelState.AddModelError("", "Something went wrong updating owner");
-                return StatusCode(500, ModelState);
+                isValid = false;
+                ModelState.AddModelError("", "given details are  null");
             }
 
-            return NoContent();
+            if (!_permissionService.PermissionExists(id))
+            {
+                isValid = false;
+                ModelState.AddModelError("", "PermissionID not found");
+            }
+               
+
+            if (!ModelState.IsValid)
+            {
+                isValid = false;
+            }
+               
+
+            var userMap = _mapper.Map<Permission>(updatedPermission);
+             isUpdated = _permissionService.UpdatePermission(id, userMap);
+
+
+            if (!isUpdated)
+            {
+                ModelState.AddModelError("", "Something went wrong updating permission");
+            }
+            if (!isValid)
+            {
+                return BadRequest(ModelState);
+            }
+            return isUpdated? NoContent() : StatusCode(500, ModelState);
         }
 
             [HttpDelete("{Id}")]

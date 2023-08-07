@@ -46,7 +46,9 @@ namespace TaskManagement.Repository
 
         public bool UpdatePermission(int id, Permission permissionDto)
         {
-            _Context.Update(permissionDto);
+            var per = _Context.Permission.Where(x => x.PermissionId == id).FirstOrDefault();
+
+            per.PermissionName= permissionDto.PermissionName;
             return Save();
         }
         public bool Save()

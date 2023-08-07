@@ -55,7 +55,12 @@ namespace TaskManagement.Repository
 
         public bool UpdateUser(Guid id, User userDto)
         {
-            _Context.Update(userDto);
+           var x=_Context.User.Where(x=>x.Id == id).FirstOrDefault();
+
+            x.Email=userDto.Email;
+            x.Username=userDto.Username;
+            x.Password=userDto.Password;
+            x.ModifiedDate=DateTime.Now;
             return Save();
         }
     }

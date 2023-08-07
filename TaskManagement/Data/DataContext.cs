@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using TaskManagement.Models;
+using Task = TaskManagement.Models.Task;
 
 namespace TaskManagement.Data
 {
@@ -13,6 +14,9 @@ namespace TaskManagement.Data
         public DbSet<UserRole> UserRole { get; set; }
        public DbSet<Permission> Permission { get; set; }
        public DbSet<RolePermission> RolePermission { get; set; }
+       public DbSet<Task> Task { get; set; }
+       public DbSet<UserTask>UserTask { get; set; }
+
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -40,6 +44,18 @@ namespace TaskManagement.Data
                 .HasOne(ur => ur.User)
                 .WithMany(u => u.UserRoles)
                 .HasForeignKey(ur => ur.Id);
+
+            modelBuilder.Entity<UserTask>()
+              .HasKey(ur => new { ur.Id, ur.TaskId });
+            modelBuilder.Entity<UserTask>()
+                .HasOne(ur => ur.User)
+                .WithMany(u => u.UserTasks)
+                .HasForeignKey(ur => ur.Id);
+
+            modelBuilder.Entity<UserTask>()
+                .HasOne(ur => ur.Task)
+                .WithMany(u => u.UserTasks)
+                .HasForeignKey(ur => ur.TaskId);
 
 
 

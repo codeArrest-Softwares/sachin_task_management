@@ -72,23 +72,44 @@ namespace TaskManagement.Controllers
         [ProducesResponseType(404)]
         public IActionResult UpdateUser(Guid userId,[FromBody] UserDto updatedUser)
         {
+            bool isValid = true;
+            bool isUpdated = false;
+
             if (updatedUser == null)
-                return BadRequest(ModelState);
-
-            if (userId != updatedUser.Id)
-                return BadRequest(ModelState);
-
-            if (!_userService.UserExists(userId))
-                return NotFound();
-
-            if (!ModelState.IsValid)
-                return BadRequest();
-
-            var userMap = _mapper.Map<User>(updatedUser);
-
-            if (!_userService.UpdateUser(userId,userMap))
             {
-                ModelState.AddModelError("", "Something went wrong updating owner");
+                isValid = false;
+                ModelState.AddModelError("", "Updated user is null");
+            }
+
+            if (isValid && !_userService.UserExists(userId))
+            {
+                isValid = false;
+                ModelState.AddModelError("", "User not found");
+            }
+
+            if (isValid && !ModelState.IsValid)
+            {
+                isValid = false;
+            }
+
+            if (isValid)
+            {
+                var userMap = _mapper.Map<User>(updatedUser);
+                isUpdated = _userService.UpdateUser(userId, userMap);
+
+                if (!isUpdated)
+                {
+                    ModelState.AddModelError("", "Something went wrong while updating user");
+                }
+            }
+
+            if (!isValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            if (!isUpdated)
+            {
                 return StatusCode(500, ModelState);
             }
 
@@ -112,7 +133,7 @@ namespace TaskManagement.Controllers
 
             if (!_userService.DeleteUser(userToDelete))
             {
-                ModelState.AddModelError("", "Something went wrong deleting owner");
+                ModelState.AddModelError("", "Something went wrong deleting user");
             }
 
             return NoContent();

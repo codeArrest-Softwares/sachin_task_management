@@ -43,7 +43,7 @@ namespace TaskManagement.Controllers
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
 
-            //  var userMap = _mapper.Map<RolePermission>(rolepermissionCreate);
+          
 
 
             _userRoleService.CreateUserRole(userRoleDto);
@@ -54,28 +54,42 @@ namespace TaskManagement.Controllers
         [HttpPut("{id}")]
         public IActionResult UpdateRolePermission([FromRoute] Guid id, [FromBody] UserRoleDto userRoleDto)
         {
+            bool IsValid = true;
+          bool  updateduserRole = false;
 
             if (userRoleDto == null)
-                return BadRequest(ModelState);
-
-            //if (id != updatedRolePermission.RoleId)
-            //    return BadRequest(ModelState);
-
-            if (!_userRoleService.UserRoleExist(id))
-                return NotFound();
-
-            if (!ModelState.IsValid)
-                return BadRequest();
-
-            //  var userMap = _mapper.Map<Role>(updatedRolePermission);
-
-            if (!_userRoleService.UpdateUserRole(id, userRoleDto))
             {
-                ModelState.AddModelError("", "Something went wrong while updating ");
-                return StatusCode(500, ModelState);
+                IsValid = false;
+            }
+               
+
+
+            if (IsValid &&!_userRoleService.UserRoleExist(id))
+            {
+
+                IsValid = false;
+                ModelState.AddModelError("", "Roleperm not found");
+            }
+               
+
+            if (IsValid && !ModelState.IsValid)
+            {
+                IsValid=false;
             }
 
-            return Ok("updated Successfully");
+            updateduserRole = _userRoleService.UpdateUserRole(id, userRoleDto);
+
+            if (!updateduserRole)
+            {
+                ModelState.AddModelError("", "Something went wrong while updating ");
+
+            }
+            if (!IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            return updateduserRole ? Ok("updated") : StatusCode(500, ModelState);
         }
 
         [HttpDelete("{Id}")]
@@ -86,7 +100,7 @@ namespace TaskManagement.Controllers
                 return Ok("Id not found!");
             }
 
-            //  var userToDelete = _rolePermissionService.GetRolePermissionById(roleId);
+           
 
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);

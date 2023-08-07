@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using TaskManagement.Dto;
 using TaskManagement.Models;
+using Task = TaskManagement.Models.Task;
 
 namespace TaskManagement.Mapper
 {
@@ -20,6 +21,11 @@ namespace TaskManagement.Mapper
             CreateMap<UserRoleDto,UserRole>();
             CreateMap<RolePermissionDto,RolePermission>();
             CreateMap<RolePermission,RolePermissionDto>();
+            CreateMap<Task,TaskDto>();
+            CreateMap<TaskDto,Task>();
+            CreateMap<UserTaskDto,UserTask>();
+            CreateMap<UserTask,UserTaskDto>();
+
         }
     }
 }

@@ -43,8 +43,11 @@ namespace TaskManagement.Repository
 
         public bool UpdateRole(Guid id, Role roleDto)
         {
-            _Context.Update(roleDto);
-           return Save();
+            var tas = _Context.Role.Where(x => x.RoleId== id).FirstOrDefault();
+
+            tas.RoleName = roleDto.RoleName;
+            
+            return Save();
         }
         public bool Save()
         {
