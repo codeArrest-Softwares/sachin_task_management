@@ -1,0 +1,13 @@
+version: "3.2"
+services:
+
+  sql-server-db:
+    container_name: sql-server-db
+    image: mcr.microsoft.com/mssql/server:2022-latest
+    ports:
+      - "1434:1433"
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    environment:
+      SA_PASSWORD: "Admin@1234"
+      ACCEPT_EULA: "Y"
