@@ -17,15 +17,26 @@ namespace TaskManagement.Controllers
             _taskService = taskService;
             _mapper = mapper;
         }
+
         [HttpGet]
+
         public ActionResult GetAllTasks()
         {
-            var tasks = _taskService.GetAllTasks();
+            var tasks =_mapper.Map<List<TaskDto>>( _taskService.GetAllTasks());
 
             return Ok(tasks);
 
 
         }
+
+        [HttpGet("api/Task/AllTasksByDeadlines")]
+        public ActionResult GetAllTasksByDeadlines()
+        {
+            var tasks = _taskService.GetAllTasksByDeadlines();
+
+            return Ok(tasks);
+        }
+
         [HttpGet("{taskId}")]
         public ActionResult GetTaskById(Guid taskId)
         {
@@ -44,14 +55,11 @@ namespace TaskManagement.Controllers
             {
                 return BadRequest("invalid entry");
             }
-            //if (!DateTime.TryParse(taskdto.DueDate, out DateTime dueDate))
-            //{
-            //    // Handle invalid date format
-            //    return BadRequest("Invalid DueDate format. Use yyyy-MM-dd format.");
-            //}
-            var taskmap = _mapper.Map<Task>(taskdto);
+           
+           
 
-            if (!_taskService.CreateTask(taskmap))
+            var taskmap = _mapper.Map<Task>(taskdto);
+            if (_taskService.CreateTask(taskmap)==false)
             {
                 return Ok("This Title name and Associated Project already exist!");
             }

@@ -36,14 +36,26 @@ namespace TaskManagement
             builder.Services.AddScoped<ITaskService, TaskService>();
             builder.Services.AddScoped<ITaskRepository,TaskRepository>();
             builder.Services.AddScoped<IUserTaskService, UserTaskService>();
-            builder.Services.AddScoped<IUserTaskRepository,UserTaskRepository>();
+            builder.Services.AddScoped<IUserTaskRepository,UserTaskRepository>(); 
+            builder.Services.AddScoped<ICommentsService, CommentsService>();
+            builder.Services.AddScoped<ICommentsRepository, CommentsRepository>();
+            builder.Services.AddScoped<ITaskCommentService, TaskCommentService>();
+            builder.Services.AddScoped<ITaskCommentRepository,TaskCommentRepository>();
+            builder.Services.AddScoped<IProjectService,ProjectService>();
+            builder.Services.AddScoped<IProjectRepository,ProjectRepository>();
+            builder.Services.AddScoped<IProjectTaskService ,ProjectTaskService>();
+            builder.Services.AddScoped<IProjetTaskRepository ,ProjectTaskRepository>();
 
 
-           
-           
-           
-         
-           
+
+
+
+
+
+
+
+
+
 
 
 

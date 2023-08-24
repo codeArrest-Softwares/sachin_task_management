@@ -31,7 +31,8 @@ namespace TaskManagement.Services
                 Title=task.TaskTitle,
                 AssociatedProject=task.AssociatedProject,
                 Description="xyx",
-                Priority="high",
+                Priority=task.Priority,
+               Status=task.Status,
                 
                 
             };

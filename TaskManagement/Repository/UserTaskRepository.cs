@@ -4,6 +4,8 @@ using TaskManagement.Data;
 using TaskManagement.Dto;
 using TaskManagement.IRepository;
 using TaskManagement.Models;
+using TaskManagement.Enums;
+using Task = TaskManagement.Models.Task;
 
 namespace TaskManagement.Repository
 {
@@ -39,6 +41,10 @@ namespace TaskManagement.Repository
             var user = _context.User.Where(x => x.Id == UserId).FirstOrDefault();
             var tid = _context.UserTask.Where(p => p.Id == UserId).Select(x => x.TaskId).FirstOrDefault();
             var task = _context.Task.Where(x => x.TaskId == tid).FirstOrDefault();
+        if(task.Status==Enums.Status.Completed)
+            {
+                return false;
+            }
 
             _context.Remove(task);
             return Save();
@@ -64,6 +70,7 @@ namespace TaskManagement.Repository
                 Username = user.Username,
                 TaskTitle=task.Title,
                 AssociatedProject=task.AssociatedProject,
+                Status=task.Status
 
 
             };
@@ -76,11 +83,17 @@ namespace TaskManagement.Repository
 
             var tasid = _context.UserTask.Where(p => p.Id == id).Select(x => x.TaskId).FirstOrDefault();
             var task = _context.Task.Where(x => x.TaskId == tasid).FirstOrDefault();
+            var rid = _context.UserRole.Where(x => x.Id == id).Select(x=>x.RoleId).FirstOrDefault();
+            var role = _context.Role.Where(x => x.RoleId == rid).FirstOrDefault();
 
+            if (role.RoleName == "TeamMember")
+            {
+                task.Title = userTaskDto.TaskTitle;
+                user.Username = userTaskDto.Username;
 
-            task.Title = userTaskDto.TaskTitle;
-            user.Username = userTaskDto.Username;
-             task.AssociatedProject = userTaskDto.AssociatedProject;
+                task.Status = userTaskDto.Status;
+                task.AssociatedProject = userTaskDto.AssociatedProject;
+            }
             return Save();
         }
 

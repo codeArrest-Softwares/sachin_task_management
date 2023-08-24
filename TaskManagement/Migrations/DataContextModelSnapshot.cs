@@ -22,6 +22,30 @@ namespace TaskManagement.Migrations
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
+            modelBuilder.Entity("TaskManagement.Models.Comments", b =>
+                {
+                    b.Property<Guid>("CommentsID")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("Author")
+                        .IsRequired()
+                        .HasMaxLength(30)
+                        .HasColumnType("nvarchar(30)");
+
+                    b.Property<string>("Text")
+                        .IsRequired()
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)");
+
+                    b.Property<DateTime>("TimeStamp")
+                        .HasColumnType("datetime2");
+
+                    b.HasKey("CommentsID");
+
+                    b.ToTable("Comments");
+                });
+
             modelBuilder.Entity("TaskManagement.Models.Permission", b =>
                 {
                     b.Property<int>("PermissionId")
@@ -44,6 +68,39 @@ namespace TaskManagement.Migrations
                     b.HasKey("PermissionId");
 
                     b.ToTable("Permission");
+                });
+
+            modelBuilder.Entity("TaskManagement.Models.Project", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("ProjectName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("Status")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Project");
+                });
+
+            modelBuilder.Entity("TaskManagement.Models.ProjectTask", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("TaskId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasKey("Id", "TaskId");
+
+                    b.HasIndex("TaskId");
+
+                    b.ToTable("ProjectTask");
                 });
 
             modelBuilder.Entity("TaskManagement.Models.Role", b =>
@@ -102,10 +159,14 @@ namespace TaskManagement.Migrations
                     b.Property<DateTime>("DueDate")
                         .HasColumnType("datetime2");
 
-                    b.Property<string>("Priority")
-                        .IsRequired()
-                        .HasMaxLength(50)
-                        .HasColumnType("nvarchar(50)");
+                    b.Property<int>("Priority")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Status")
+                        .HasColumnType("int");
+
+                    b.Property<int>("TaskCompletion")
+                        .HasColumnType("int");
 
                     b.Property<string>("Title")
                         .IsRequired()
@@ -115,6 +176,21 @@ namespace TaskManagement.Migrations
                     b.HasKey("TaskId");
 
                     b.ToTable("Task");
+                });
+
+            modelBuilder.Entity("TaskManagement.Models.TaskComment", b =>
+                {
+                    b.Property<Guid>("TaskId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("CommentsID")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasKey("TaskId", "CommentsID");
+
+                    b.HasIndex("CommentsID");
+
+                    b.ToTable("TaskComment");
                 });
 
             modelBuilder.Entity("TaskManagement.Models.User", b =>
@@ -182,6 +258,25 @@ namespace TaskManagement.Migrations
                     b.ToTable("UserTask");
                 });
 
+            modelBuilder.Entity("TaskManagement.Models.ProjectTask", b =>
+                {
+                    b.HasOne("TaskManagement.Models.Project", "Project")
+                        .WithMany("ProjectTasks")
+                        .HasForeignKey("Id")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("TaskManagement.Models.Task", "Task")
+                        .WithMany("ProjectTasks")
+                        .HasForeignKey("TaskId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Project");
+
+                    b.Navigation("Task");
+                });
+
             modelBuilder.Entity("TaskManagement.Models.RolePermission", b =>
                 {
                     b.HasOne("TaskManagement.Models.Permission", "Permission")
@@ -199,6 +294,25 @@ namespace TaskManagement.Migrations
                     b.Navigation("Permission");
 
                     b.Navigation("Role");
+                });
+
+            modelBuilder.Entity("TaskManagement.Models.TaskComment", b =>
+                {
+                    b.HasOne("TaskManagement.Models.Comments", "Comments")
+                        .WithMany("TaskComment")
+                        .HasForeignKey("CommentsID")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("TaskManagement.Models.Task", "Task")
+                        .WithMany("TaskComment")
+                        .HasForeignKey("TaskId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Comments");
+
+                    b.Navigation("Task");
                 });
 
             modelBuilder.Entity("TaskManagement.Models.UserRole", b =>
@@ -239,9 +353,19 @@ namespace TaskManagement.Migrations
                     b.Navigation("User");
                 });
 
+            modelBuilder.Entity("TaskManagement.Models.Comments", b =>
+                {
+                    b.Navigation("TaskComment");
+                });
+
             modelBuilder.Entity("TaskManagement.Models.Permission", b =>
                 {
                     b.Navigation("RolePermissions");
+                });
+
+            modelBuilder.Entity("TaskManagement.Models.Project", b =>
+                {
+                    b.Navigation("ProjectTasks");
                 });
 
             modelBuilder.Entity("TaskManagement.Models.Role", b =>
@@ -253,6 +377,10 @@ namespace TaskManagement.Migrations
 
             modelBuilder.Entity("TaskManagement.Models.Task", b =>
                 {
+                    b.Navigation("ProjectTasks");
+
+                    b.Navigation("TaskComment");
+
                     b.Navigation("UserTasks");
                 });
 

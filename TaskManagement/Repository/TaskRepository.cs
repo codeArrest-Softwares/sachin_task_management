@@ -1,4 +1,5 @@
-﻿using TaskManagement.Data;
+﻿using Microsoft.EntityFrameworkCore;
+using TaskManagement.Data;
 using TaskManagement.Dto;
 using TaskManagement.IRepository;
 using Task = TaskManagement.Models.Task;
@@ -38,6 +39,7 @@ namespace TaskManagement.Repository
         {
             return _Context.Task.ToList();
         }
+     
 
         public Task GetTaskById(Guid id)
         {
@@ -58,12 +60,25 @@ namespace TaskManagement.Repository
             tas.Priority = taskdto.Priority;
             tas.AssociatedProject = taskdto.AssociatedProject;
             tas.DueDate = tas.DueDate;
+            tas.TaskCompletion = tas.TaskCompletion;
             return Save();
         }
         public bool Save()
         {
             var saved = _Context.SaveChanges();
             return saved > 0 ? true : false;
+        }
+
+        public ICollection<Task> GetAllTasksByDeadlines()
+        {
+            var upcomingTasks = _Context.Task
+          .Where(t => t.DueDate >= DateTime.UtcNow && t.DueDate <= DateTime.UtcNow.AddDays(30))
+          .ToList(); 
+
+         
+            var sortedTasks = upcomingTasks.OrderBy(task => task.DueDate).ToList();
+
+            return sortedTasks;
         }
     }
 }

@@ -39,7 +39,7 @@ namespace TaskManagement.Repository
             var user = _Context.User.Where(x => x.Id == id).FirstOrDefault();
             var rid = _Context.UserRole.Where(p => p.Id == id).Select(x => x.RoleId).FirstOrDefault();
             var role = _Context.Role.Where(x => x.RoleId == rid).FirstOrDefault(); 
-            //if (pid != 0 && role != null) { return false; }
+            
             _Context.Remove(role);
             return Save();
         }

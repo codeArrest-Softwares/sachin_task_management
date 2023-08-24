@@ -7,5 +7,6 @@
 
         public User User { get; set; }
         public Task Task { get; set; }
+      
     }
 }

@@ -5,6 +5,7 @@ namespace TaskManagement.IRepository
     public interface ITaskRepository
     {
         ICollection<Task> GetAllTasks();
+        ICollection<Task> GetAllTasksByDeadlines();
         Task GetTaskById(Guid id);
         bool TaskExists(Guid id);      
         bool CreateTask(Task task);

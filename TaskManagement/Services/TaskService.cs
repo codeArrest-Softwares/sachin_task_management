@@ -20,9 +20,11 @@ namespace TaskManagement.Services
                 Title = task.Title,
                 Description = task.Description,
                 AssociatedProject = task.AssociatedProject,
-                //  DueDate = DateTime.Now,
-                DueDate = task.DueDate,
+                DueDate =DateTime.Now.AddDays(3),
+               //DueDate = task.DueDate,
                 Priority = task.Priority,
+                Status= task.Status,
+                TaskCompletion=task.TaskCompletion
 
             };
 
@@ -38,6 +40,11 @@ namespace TaskManagement.Services
         public ICollection<Task> GetAllTasks()
         {
             return _taskRepository.GetAllTasks();
+        }
+
+        public ICollection< Task> GetAllTasksByDeadlines()
+        {
+            return _taskRepository.GetAllTasksByDeadlines();
         }
 
         public Task GetTaskById(Guid id)

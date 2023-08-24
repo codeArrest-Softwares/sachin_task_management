@@ -25,6 +25,11 @@ namespace TaskManagement.Mapper
             CreateMap<TaskDto,Task>();
             CreateMap<UserTaskDto,UserTask>();
             CreateMap<UserTask,UserTaskDto>();
+            CreateMap<CommentsDto,Comments>();
+            CreateMap<Comments,CommentsDto>();
+            CreateMap<Project, ProjectDto>();
+            CreateMap<ProjectDto, Project>();
+
 
         }
     }

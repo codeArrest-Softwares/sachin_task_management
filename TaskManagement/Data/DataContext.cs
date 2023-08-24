@@ -16,6 +16,11 @@ namespace TaskManagement.Data
        public DbSet<RolePermission> RolePermission { get; set; }
        public DbSet<Task> Task { get; set; }
        public DbSet<UserTask>UserTask { get; set; }
+       public DbSet<Comments>Comments { get; set; }
+       public DbSet<TaskComment> TaskComment { get; set; }
+        public DbSet<Project> Project { get; set; }
+        public DbSet<ProjectTask> ProjectTask { get; set; }
+
 
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -55,6 +60,32 @@ namespace TaskManagement.Data
             modelBuilder.Entity<UserTask>()
                 .HasOne(ur => ur.Task)
                 .WithMany(u => u.UserTasks)
+                .HasForeignKey(ur => ur.TaskId);
+
+
+            modelBuilder.Entity<TaskComment>()
+            .HasKey(ur => new { ur.TaskId, ur.CommentsID});
+            modelBuilder.Entity<TaskComment>()
+                .HasOne(ur => ur.Task)
+                .WithMany(u => u.TaskComment)
+                .HasForeignKey(ur => ur.TaskId);
+
+            modelBuilder.Entity<TaskComment>()
+                .HasOne(ur => ur.Comments)
+                .WithMany(u => u.TaskComment)
+                .HasForeignKey(ur => ur.CommentsID);
+
+
+            modelBuilder.Entity<ProjectTask>()
+            .HasKey(ur => new { ur.Id, ur.TaskId });
+            modelBuilder.Entity<ProjectTask>()
+                .HasOne(ur => ur.Project)
+                .WithMany(u => u.ProjectTasks)
+                .HasForeignKey(ur => ur.Id);
+
+            modelBuilder.Entity<ProjectTask>()
+                .HasOne(ur => ur.Task)
+                .WithMany(u => u.ProjectTasks)
                 .HasForeignKey(ur => ur.TaskId);
 
 

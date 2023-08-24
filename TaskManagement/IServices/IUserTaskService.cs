@@ -11,6 +11,7 @@ namespace TaskManagement.IServices
         bool UserTaskExist(Guid id);
         public bool AssignTask( UserTaskDto task);
         public bool UpdateUserTask(Guid id, UserTaskDto userTaskdto);
+
         public bool DeleteUserTask(Guid UserId);
 
     }
